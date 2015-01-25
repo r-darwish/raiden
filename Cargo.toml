@@ -1,0 +1,5 @@
+[package]
+
+name = "raiden"
+version = "0.0.1"
+authors = ["Roey Darwish Dror <roeyd@infinidat.com>"]
