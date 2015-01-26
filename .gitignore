@@ -1,1 +1,4 @@
 /target
+.env
+__pycache__
+*.pyc
