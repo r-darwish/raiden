@@ -13,7 +13,7 @@ fn open_disks(source_filename: &str, disks: usize) -> (Vec<Option<File>>, Option
         let path = Path::new(format!("{}_{}", source_filename, s));
         let mut optional_disk_file = match File::open(&path) {
             Err(why) => {
-                println!("Cannot create {}: {}", path.display(), why.desc);
+                println!("Cannot open {}: {}", path.display(), why.desc);
                 if amount_missing > 0 {
                     panic!("Too many missing disks");
                 } else {
@@ -104,13 +104,21 @@ fn reconstruct_chunk(chunks: &mut [Chunk], missing_index: usize) {
             chunks[missing_index][byte_index] ^= chunks[chunk_index][byte_index];
         }
     }
-}        
+}
 
 pub fn merge(source_filename: &str, disks: usize) {
-    let mut restored_file = match File::create(&Path::new(format!("res__{}", source_filename))) {
-        Err(why) => panic!("Unable to open the file for restoration {}", why.desc),
+    let restored_path = {
+        let mut path = Path::new(source_filename);
+        let restored_filename = format!("res__{}", &path.filename_str().unwrap());
+        path.set_filename(restored_filename);
+        path
+    };
+
+    let mut restored_file = match File::create(&restored_path) {
+        Err(why) => panic!("Unable to open the file for restoration at {}: {}", restored_path.display(), why.desc),
         Ok(file) => file
     };
+    println!("Restoring the file to {}", restored_path.display());
 
     let (mut disk_files, missing_disk, mut file_length) = open_disks(source_filename, disks);
     
