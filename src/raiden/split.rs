@@ -1,6 +1,6 @@
 use std::io::File;
 use std::io::IoErrorKind;
-use super::types::{Chunk,CHUNK_SIZE};
+use super::{Chunk, create_chunks_vec};
 
 fn create_disks(source_filename: &str, disks: usize, source_file_length: u64) -> Vec<File> {
     let mut disk_files: Vec<File> = Vec::with_capacity(disks);
@@ -99,10 +99,7 @@ pub fn split(source_filename: &str, disks: usize) {
 
     let mut disk_files = create_disks(source_filename, disks, file_length);
 
-    let mut chunks: Vec<Chunk> = Vec::with_capacity(disks);
-    for _ in range(0, disks) {
-        chunks.push([0; CHUNK_SIZE]);
-    }
+    let mut chunks = create_chunks_vec(disks);
     
     let mut stripe_number = 0;
     let mut eof_reached = false;

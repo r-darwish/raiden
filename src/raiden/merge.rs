@@ -1,7 +1,7 @@
 use std::io::File;
 use std::io::Reader;
 use std::cmp::min;
-use super::types::{CHUNK_SIZE, Chunk};
+use super::{Chunk, create_chunks_vec};
 
 fn open_disks(source_filename: &str, disks: usize) -> (Vec<Option<File>>, Option<usize>, usize) {
     let mut optional_disk_files: Vec<Option<File>> = Vec::with_capacity(disks as usize);
@@ -80,7 +80,7 @@ fn read_chunks_from_disks(chunks: &mut [Chunk], disks: &mut [Option<File>]) {
             Some(disk) => {
                 match disk.read(chunk.as_mut_slice()) {
                     Ok(n) => {
-                        if n != CHUNK_SIZE {
+                        if n != chunk.len() {
                             panic!("Read unexpected amount of bytes {} for disk {}", n, i);
                         }
                     },
@@ -122,12 +122,7 @@ pub fn merge(source_filename: &str, disks: usize) {
 
     let (mut disk_files, missing_disk, mut file_length) = open_disks(source_filename, disks);
     
-    let mut chunks: Vec<Chunk> = Vec::with_capacity(disks as usize);
-
-    for _ in range(0, disks) {
-        chunks.push([0; CHUNK_SIZE]);
-    };
-    
+    let mut chunks = create_chunks_vec(disks);
     let mut stripe_number = 0;
 
     while file_length > 0 {
