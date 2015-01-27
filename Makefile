@@ -1,6 +1,6 @@
-raiden: target/raiden
+raiden: .build
 
-target/raiden:
+.build:
 	cargo build
 
 test: .env raiden .test
