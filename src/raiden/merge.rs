@@ -1,4 +1,4 @@
-use std::io::{File, Reader, IoError, IoErrorKind};
+use std::old_io::{File, Reader, IoError, IoErrorKind};
 use std::cmp::min;
 use super::{Chunk, create_chunks_vec};
 
@@ -86,7 +86,7 @@ fn write_chunks_to_file(restored_file: &mut File, chunks: &[Chunk], parity_chunk
 
         let chunk = chunks[chunk_index];
         let to_write = min(bytes_remaining, chunk.len());
-        try!(restored_file.write(&chunk[..to_write]));
+        try!(restored_file.write_all(&chunk[..to_write]));
         bytes_remaining -= to_write;
 
         if bytes_remaining == 0 {

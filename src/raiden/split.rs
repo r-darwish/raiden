@@ -1,4 +1,4 @@
-use std::io::{File, IoError, IoErrorKind};
+use std::old_io::{File, IoError, IoErrorKind};
 use super::{Chunk, create_chunks_vec};
 
 fn create_disks(source_filename: &str, disks: usize, source_file_length: u64)
@@ -18,7 +18,7 @@ fn create_disks(source_filename: &str, disks: usize, source_file_length: u64)
 fn write_to_disks(disk_files: &mut [File], chunks: &[Chunk])
         -> Result<(), IoError> {
     for (disk, chunk) in disk_files.iter_mut().zip(chunks.iter()) {
-        try!(disk.write(chunk));
+        try!(disk.write_all(chunk));
     }
 
     Ok(())
